@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="THE MAZE SIGNAL LOST key art: a red door in a long abandoned corridor">
+  <defs>
+    <linearGradient id="night" x2="0" y2="1"><stop stop-color="#080d12"/><stop offset="1" stop-color="#161314"/></linearGradient>
+    <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#392327"/><stop offset="1" stop-color="#080b0d"/></linearGradient>
+    <radialGradient id="red"><stop stop-color="#dc2a2b" stop-opacity=".55"/><stop offset="1" stop-color="#e03236" stop-opacity="0"/></radialGradient>
+    <linearGradient id="door" x2="1" y2="1"><stop stop-color="#3f1017"/><stop offset=".55" stop-color="#0f0c11"/><stop offset="1" stop-color="#8e2a2d"/></linearGradient>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 2H4" stroke="#000" stroke-opacity=".16"/></pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#night)"/>
+  <path d="M0 0l470 175v343L0 675zM1200 0L730 175v343l470 157z" fill="#1f2728" opacity=".42"/>
+  <path d="M0 675l470-157h260l470 157" fill="url(#floor)"/><path d="M0 0l470 175h260l470-175" fill="#0b1015"/>
+  <rect x="360" y="0" width="480" height="675" fill="url(#red)"/>
+  <path d="M483 523V181h234v342" fill="#0b0c10" stroke="#6d292d" stroke-width="12"/>
+  <rect x="498" y="195" width="202" height="324" fill="url(#door)"/>
+  <path d="M501 198h196M501 518h196" stroke="#c93d39" stroke-opacity=".7" stroke-width="3"/>
+  <rect x="667" y="370" width="9" height="14" rx="4" fill="#caa68b"/>
+  <path d="M581 518l-18 104 74 0-20-104-8-43h-18z" fill="#05080a"/>
+  <ellipse cx="601" cy="452" rx="22" ry="27" fill="#05080a"/>
+  <path d="M569 553l-45 68 29 8 41-64M623 553l44 70-27 9-39-66" stroke="#05080a" stroke-width="16" fill="none"/>
+  <text x="85" y="92" font-family="monospace" font-size="17" fill="#aeb6ae" letter-spacing="6">ST. VESPER ARCHIVE</text>
+  <text x="85" y="280" font-family="Georgia,serif" font-size="110" fill="#ede6d4" letter-spacing="10">THE MAZE</text>
+  <text x="90" y="340" font-family="monospace" font-size="39" fill="#cd4746" letter-spacing="22">SIGNAL LOST</text>
+  <text x="91" y="391" font-family="monospace" font-size="16" fill="#a1a49d" letter-spacing="3">THE BUILDING REMEMBERS YOU.</text>
+  <path d="M90 416H480" stroke="#872d31" stroke-width="2"/>
+  <text x="90" y="624" font-family="monospace" font-size="19" fill="#ce8d83" letter-spacing="8">FIVE CHAPTERS. ONE FREQUENCY.</text>
+  <text x="872" y="625" font-family="monospace" font-size="16" fill="#a8a9a2" letter-spacing="5">CH. 01 — 05</text>
+  <rect width="1200" height="675" fill="url(#scan)"/>
+  <rect x="10" y="10" width="1180" height="655" fill="none" stroke="#69706d" stroke-opacity=".3" stroke-width="2"/>
+</svg>

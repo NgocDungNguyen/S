@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+*.log
+coverage/
+dist/
+.cache/
+playwright-report/
+test-results/
+__pycache__/
+.env

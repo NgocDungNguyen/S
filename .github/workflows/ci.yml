@@ -1,0 +1,25 @@
+name: Game CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript and game simulation
+        run: npm run check
+      - name: Check core assets are committed
+        run: |
+          test -s assets/keyart.svg
+          test -s assets/icon.svg
+          test -s assets/audio/01_the_maze.wav
+          test -s assets/audio/02_the_ward.wav
+          test -s assets/audio/03_the_foundry.wav
+          test -s assets/audio/04_the_transmission.wav
+          test -s assets/audio/05_the_heart.wav

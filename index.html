@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090c0f">
+  <meta name="description" content="THE MAZE: SIGNAL LOST — a five-chapter retro survival horror shooter. Find the recordings. Face what remembers you. Escape.">
+  <title>THE MAZE // SIGNAL LOST</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" aria-label="The Maze: Signal Lost game">
+    <div id="stage">
+      <canvas id="view" width="480" height="270" aria-label="First-person horror game world"></canvas>
+      <div id="film" aria-hidden="true"></div>
+      <div id="hurt-vignette" aria-hidden="true"></div>
+      <div id="crosshair" aria-hidden="true"><span></span></div>
+      <canvas id="minimap" width="170" height="170" hidden aria-label="Level map"></canvas>
+    </div>
+    <div id="hud" class="hidden" aria-live="off">
+      <div class="hud-top">
+        <div class="mission-container">
+          <div id="chapter-label" class="eyebrow">CHAPTER 01 / LOW INTAKE</div>
+          <div id="objective" class="mission">RECOVER MEMORY FRAGMENTS</div>
+        </div>
+        <div class="right-meta"><span id="timer">00:00</span><span id="difficulty-label">SURVIVOR</span></div>
+      </div>
+      <div id="center-message" role="status" aria-live="polite"></div>
+      <div id="interact-prompt" class="hidden">[ E ] INTERACT</div>
+      <div class="hud-bottom">
+        <div class="vitals">
+          <div class="meter"><label>VITAL SIGNS</label><div class="track"><div id="health-fill" class="fill hp"></div></div><b id="health-n">100</b></div>
+          <div class="meter"><label>FLASHLIGHT</label><div class="track"><div id="battery-fill" class="fill battery"></div></div><b id="battery-n">100</b></div>
+          <div class="meter"><label>BREATH</label><div class="track"><div id="stamina-fill" class="fill stamina"></div></div><b id="stamina-n">100</b></div>
+        </div>
+        <div class="ammo-wrap"><div id="weapon-name">UNARMED</div><div id="ammo-count">-- / --</div><div id="flashlight-indicator">F // LIGHT ON</div></div>
+      </div>
+      <div id="controls-hint">WASD MOVE <span>·</span> SHIFT SPRINT <span>·</span> E INTERACT <span>·</span> ESC PAUSE</div>
+    </div>
+    <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <div id="build-info">BUILD 0.9.0 • WEB EDITION</div>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
