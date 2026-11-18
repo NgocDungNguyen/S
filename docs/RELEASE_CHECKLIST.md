@@ -1,9 +1,10 @@
 # Release checklist — pre-release 0.9.0
 
 ## Verified in this development session
-- [x] `npm run check` passes: syntax checks and 11 gameplay tests.
+- [x] `npm run check` passes: syntax checks and 31 automated checks including five-chapter campaign routes and mocked UI smoke.
 - [x] Basic static server returned HTTP 200 on localhost.
 - [x] Project uses local modules/assets without CDN dependencies.
+- [x] Self-contained `play-offline.html` release artifact embeds all game logic and original WAV files.
 - [x] Five original soundtrack WAV files exist and audio regeneration script is included.
 - [x] Studio documentation and original prototype are in the project directory.
 

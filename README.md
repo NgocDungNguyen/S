@@ -10,6 +10,10 @@ This project begins with the supplied **Chapter 1 — The Maze** prototype. Its 
 
 ## Play the game
 
+**Simplest option:** download [`play-offline.html`](play-offline.html) and double-click it. This single-file edition contains every chapter, all game code, original art, procedural effects and all five original soundtracks, with **no installation, server, or network connection required**.
+
+For development, run the modular source:
+
 1. Install **Node.js 20+** (no packages or npm installation required).
 2. Run `npm start` in this repository.
 3. Open **http://localhost:4173** in a desktop browser; headphones recommended.
@@ -50,6 +54,7 @@ Mouse input uses Pointer Lock. Click the game viewport to reacquire focus after 
 ```text
 .
 ├── index.html                     Browser entry point + HUD/menu root
+├── play-offline.html             Self-contained distributable (includes all WAV)
 ├── styles.css                     Menu, horror UI, HUD and responsive styling
 ├── src/
 │   ├── main.js                    Frontend state machine, UI, save slots, input
@@ -64,7 +69,7 @@ Mouse input uses Pointer Lock. Click the game viewport to reacquire focus after 
 ├── scripts/
 │   ├── server.mjs                Dependency-free development server
 │   └── generate_audio.py        Deterministic, stdlib WAV-generation pipeline
-├── tests/                         Built-in node:test coverage
+├── tests/                         Built-in node:test coverage: 31 checks
 ├── docs/                          Game, story, technical, art, QA and production bibles
 ├── AGENTS.md                      Specialist roles and contribution protocol
 ├── .github/workflows/ci.yml       Automated source checks and unit tests
@@ -74,7 +79,8 @@ Mouse input uses Pointer Lock. Click the game viewport to reacquire focus after 
 ## Verify
 
 ```sh
-npm run check
+npm run check   # JavaScript syntax, smoke, simulation and 5-chapter campaign tests
+npm run build   # regenerate self-contained play-offline.html with embedded music
 ```
 
 This checks all five JS modules and runs the simulation tests. CI repeats the tests on pull requests and pushes to the default branch.

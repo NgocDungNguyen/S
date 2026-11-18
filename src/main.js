@@ -326,7 +326,7 @@ overlay.addEventListener('click',event=>{
     case 'challenge':showDifficulty(value);break;
     case 'settings':showSettings(mode);break;
     case 'reset-settings':settings={...DEFAULT_SETTINGS};save.settings=settings;audio.applySettings(settings);writeSave();showSettings(returnScreen);break;
-    case 'back-settings':returnScreen==='pause'?pause():showMenu();break;
+    case 'back-settings':if(returnScreen==='pause'){mode='play';pause();}else showMenu();break;
     case 'credits':showCredits();break;
     case 'achievements':showAchievements();break;
     case 'descend':startPlay();break;
@@ -334,7 +334,7 @@ overlay.addEventListener('click',event=>{
     case 'restart':case 'retry':if(run)chapterIntro(run.chapterIndex,{difficulty:run.difficulty,challenge:run.challenge,
       carry:save.last?.carry||null});break;
     case 'journal':journal();break;
-    case 'back-journal':lastMenu==='pause'?pause():showMenu();break;
+    case 'back-journal':if(lastMenu==='pause'){mode='play';pause();}else showMenu();break;
     case 'next':if(save.last)chapterIntro(save.last.chapterIndex,save.last);break;
     case 'ending':ending(value);break;
   }

@@ -37,3 +37,7 @@ All assets are original. Render five chapter themes deterministically with `pyth
 - Add gamepad support, remappable key bindings, explicit pause for accessibility, reduced-motion defaults, and in-game calibration.
 - Improve enemy auditory localization, direct visual attack animations and user-facing hit confirmation.
 - Refactor `src/main.js` into testable UI controller modules as menus expand.
+
+## Standalone export
+
+`python3 scripts/build_offline.py` combines the five JavaScript modules, inlines styles and embeds all five original WAV tracks as base64, producing `play-offline.html`. The generated distribution can be opened locally from a browser without a server. Changes to the modular source require rebuilding that artifact. The self-contained output is syntax-checked using Node after extraction but still needs a real-browser playthrough.
