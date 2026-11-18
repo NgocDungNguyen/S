@@ -33,7 +33,124 @@ function makeTexture(base,tile,seed) {
   for(let i=0;i<6;i++){
     g.fillStyle='rgba(69,13,17,.22)';g.fillRect(rng()*64,rng()*64,1+rng()*5,3+rng()*16);
   }
+  // Sharp cracks, water damage, peeling paint, hazard stripes and mold clusters.
+  for(let i=0;i<29;i++){
+    let x=rng()*64,y=rng()*64;
+    g.beginPath();g.moveTo(x,y);
+    for(let seg=0;seg<3;seg++){x+=(rng()-.5)*13;y+=3+rng()*9;g.lineTo(x,y);}
+    g.strokeStyle=i%3===0?'rgba(7,7,8,.65)':'rgba(12,17,18,.31)';g.lineWidth=i%5===0?1.7:.65;g.stroke();
+  }
+  for(let i=0;i<20;i++){
+    const x=rng()*64,y=rng()*64,r=1+rng()*5;
+    const decay=g.createRadialGradient(x,y,0,x,y,r);
+    decay.addColorStop(0,'rgba(10,17,12,.42)');decay.addColorStop(1,'rgba(10,17,12,0)');
+    g.fillStyle=decay;g.fillRect(x-r,y-r,r*2,r*2);
+  }
+  if(tile===2){ // oil-soaked machinery, painted safety stripes
+    g.save();g.translate(-12,36);g.rotate(-.38);
+    for(let x=0;x<98;x+=11){g.fillStyle=x%2?'rgba(17,12,9,.45)':'rgba(199,119,43,.26)';g.fillRect(x,0,7,13);}g.restore();
+  }
+  if(tile===1){g.fillStyle='rgba(90,26,33,.48)';for(let i=0;i<7;i++)g.fillRect(19+i*4,12+rng()*6,1.2,4+rng()*15);}
   return c;
+}
+// Distinct hand-coded silhouettes: anatomy, torn fabric, negative-space ribs,
+// wet highlights and asymmetrical profiles. No externally licensed textures.
+function drawCreature(g,kind,color){
+  const seed=[...kind].reduce((n,c)=>n*31+c.charCodeAt(0),913)|0;
+  let state=seed>>>0;
+  const rand=()=>((state=(Math.imul(state,1664525)+1013904223)>>>0)/4294967296);
+  g.save();g.lineCap='round';g.lineJoin='round';
+  const hot=kind==='watcher'?'#f34b3c':kind==='archivist'?'#f4aea0':kind==='siren'?'#ffbfce':'#e8d1a6';
+  const flesh=kind==='husk'?'#654b3c':kind==='crawler'?'#6d4947':kind==='siren'?'#a58a9e':kind==='nurse'?'#9ca69c':kind==='archivist'?'#79616c':'#827d76';
+  const glow=g.createRadialGradient(48,54,3,48,54,46);
+  glow.addColorStop(0,kind==='archivist'?'rgba(209,45,48,.24)':'rgba(114,29,31,.15)');
+  glow.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=glow;g.fillRect(0,0,96,128);
+  const stroke=(pts,col,w)=>{g.beginPath();g.moveTo(...pts[0]);for(const pt of pts.slice(1))g.lineTo(...pt);g.strokeStyle=col;g.lineWidth=w;g.stroke();};
+  // Long trailing shapes make the monster read even at very low resolutions.
+  for(let i=0;i<11;i++){
+    const x=31+i*3.4+(rand()-.5)*6,ex=x+(rand()-.5)*31;
+    stroke([[x,62],[ex,91+rand()*14],[ex+(rand()-.5)*17,111+rand()*18]],'rgba(17,12,15,.82)',2+rand()*4);
+  }
+  if(kind==='crawler'){
+    for(let side of [-1,1])for(let i=0;i<3;i++){
+      stroke([[48+side*9,78+i*5],[48+side*(22+i*5),91+i*3],[48+side*(30+i*3),112+i*3]],'#241b1d',5);
+      stroke([[48+side*(22+i*5),91+i*3],[48+side*(30+i*3),112+i*3]],flesh,1.7);
+    }
+    g.fillStyle='#201619';g.beginPath();g.ellipse(47,82,30,13,-.15,0,7);g.fill();
+    g.fillStyle=flesh;g.beginPath();g.ellipse(49,74,22,12,-.12,0,7);g.fill();
+    g.fillStyle='#2b2020';g.beginPath();g.ellipse(55,62,15,14,.2,0,7);g.fill();
+    for(let i=0;i<6;i++){g.fillStyle=rand()>.5?'#a58e84':'#6f5251';g.fillRect(37+rand()*28,66+rand()*16,1+rand()*3,1+rand()*3);}
+    for(let [x,y] of [[50,63],[61,65]]){g.shadowColor='#f44b39';g.shadowBlur=9;g.fillStyle='#f7a28c';g.fillRect(x,y,3,2);}
+    g.restore();return;
+  }
+  const large=kind==='husk'||kind==='archivist';
+  const headY=kind==='siren'?31:kind==='nurse'?34:28;
+  const width=large?23:16;
+  // Extended limbs are angular, bent unnaturally at multiple joints.
+  for(const sign of [-1,1]){
+    const sx=48+sign*(large?21:13);
+    const elbowX=sx+sign*(large?19:12)+(rand()-.5)*6;
+    stroke([[sx,53],[elbowX,77],[elbowX+sign*(7+rand()*6),106]],'#171418',large?10:7);
+    stroke([[sx,53],[elbowX,77],[elbowX+sign*(7+rand()*6),106]],flesh,large?4:2);
+    for(let finger=0;finger<4;finger++)stroke([[elbowX+sign*10,107],[elbowX+sign*(10+finger*3),115+rand()*10]],'#1d1518',1.3);
+    stroke([[48+sign*9,87],[48+sign*(8+rand()*5),104],[48+sign*(7+rand()*8),126]],'#1a1518',large?11:8);
+    stroke([[48+sign*9,88],[48+sign*11,105]],flesh,2.2);
+  }
+  const cloak=g.createLinearGradient(25,46,73,116);cloak.addColorStop(0,'#19161a');cloak.addColorStop(.5,flesh);cloak.addColorStop(1,'#171115');
+  g.fillStyle=cloak;g.beginPath();g.moveTo(48-width,47);g.lineTo(48+width,47);
+  g.bezierCurveTo(70,60,64,89,75,122);g.lineTo(24,122);g.bezierCurveTo(30,94,24,60,48-width,47);g.fill();
+  // Split torso, ribs and damaged clothing: very deliberate readable voids.
+  g.fillStyle='#1b1416';g.beginPath();g.moveTo(47,57);g.lineTo(59,69);g.lineTo(52,100);g.lineTo(42,112);g.closePath();g.fill();
+  for(let i=0;i<7;i++){
+    const y=61+i*6.6;
+    stroke([[33+(i%2)*2,y],[46,y+3],[56,y-1]],i%3?'rgba(210,188,160,.35)':'rgba(42,20,25,.72)',1.3+rand());
+  }
+  // Head as an organically irregular mask rather than a block face.
+  g.fillStyle='#141114';g.beginPath();g.ellipse(48,headY+5,large?20:15,large?26:20,.07,0,7);g.fill();
+  const face=g.createLinearGradient(35,12,63,50);face.addColorStop(0,'#272126');face.addColorStop(.5,flesh);face.addColorStop(1,'#2b1d20');
+  g.fillStyle=face;g.beginPath();g.moveTo(36,headY-11);g.quadraticCurveTo(47,headY-23,61,headY-8);
+  g.lineTo(63,headY+11);g.lineTo(54,headY+25);g.lineTo(42,headY+19);g.lineTo(32,headY+7);g.closePath();g.fill();
+  g.fillStyle='#160f14';g.beginPath();g.ellipse(48,headY+12,10,9,0,0,Math.PI*2);g.fill();
+  // Jagged mouth teeth; asymmetry is essential to the horror profile.
+  g.fillStyle='#dfc9aa';for(let i=0;i<8;i++){
+    const x=39+i*2.6;g.beginPath();g.moveTo(x,headY+9);g.lineTo(x+1,headY+14+rand()*4);g.lineTo(x+2,headY+9);g.fill();
+  }
+  for(let eye=0;eye<2;eye++){
+    const x=eye?54:40,y=headY+1+(eye?2:-1);
+    g.shadowColor=hot;g.shadowBlur=12;g.fillStyle=hot;g.beginPath();g.ellipse(x,y,kind==='watcher'?3.7:2.1,2.1,.2,0,7);g.fill();
+  }g.shadowBlur=0;
+  // Chapter-specific mutations distinguish enemies mechanically.
+  if(kind==='nurse'){
+    stroke([[29,headY-12],[51,headY-17],[67,headY-8]],'#d9d1bd',6);
+    stroke([[48,headY-22],[48,headY-8]],'#9d4848',3);
+    stroke([[42,headY-16],[54,headY-16]],'#9d4848',3);
+    for(let i=0;i<7;i++)stroke([[30+i*5,58],[28+i*6,95+rand()*15]],'rgba(201,207,188,.28)',1.3);
+  } else if(kind==='siren'){
+    for(let i=0;i<14;i++){
+      const x=48+(rand()-.5)*20,y=15+rand()*18;
+      stroke([[x,headY-9],[x+(rand()-.5)*26,y-14]],'#2b202b',1.5+rand()*1.5);
+    }
+    g.strokeStyle='rgba(255,184,193,.55)';g.lineWidth=1;for(let y=60;y<113;y+=7)stroke([[34,y],[60,y+rand()*4]],'rgba(255,175,201,.28)',1);
+  } else if(kind==='husk'){
+    for(let i=0;i<17;i++){const x=25+rand()*48,y=30+rand()*80;g.fillStyle=rand()>.5?'#9f5b36':'#43312a';g.fillRect(x,y,2+rand()*6,2+rand()*6);}
+    stroke([[28,43],[35,23],[43,31],[50,17],[61,29],[70,44]],'#3c2924',6);
+  } else if(kind==='archivist'){
+    for(let i=0;i<9;i++){
+      const x=22+i*7;stroke([[x,48],[x+(rand()-.5)*8,80],[x+(rand()-.5)*19,125]],'rgba(229,181,161,.4)',1.8);
+    }
+    g.strokeStyle='#dc8c84';g.lineWidth=2;g.beginPath();g.ellipse(48,14,25,7,0,Math.PI,Math.PI*2);g.stroke();
+  } else {
+    // The Watcher's open chest is an occluding eye motif.
+    g.strokeStyle='rgba(200,67,68,.62)';g.lineWidth=2;
+    g.beginPath();g.ellipse(47,71,9,17,.14,0,7);g.stroke();
+    g.fillStyle='#e64b43';g.fillRect(45,71,5,4);
+  }
+  // Flakes and lacerations break up every smooth edge.
+  for(let i=0;i<48;i++){
+    g.fillStyle=rand()>.6?'rgba(211,178,156,.38)':'rgba(17,8,12,.45)';
+    const x=27+rand()*42,y=45+rand()*70;g.fillRect(x,y,.6+rand()*2.1,1+rand()*4);
+  }
+  g.restore();
 }
 function makeSprite(kind,color='#c0b8a8') {
   const c=offscreen(96,128),g=c.getContext('2d');g.imageSmoothingEnabled=false;
@@ -71,51 +188,7 @@ function makeSprite(kind,color='#c0b8a8') {
     else {px(21,73,56,9,metal);px(30,83,9,20,'#45332c');}
     return c;
   }
-  const shadow='#121018',dark='#383036',light=color,eye=kind==='watcher'?'#ff4b37':'#f7c9b0';
-  if(kind==='crawler') {
-    glow(47,84,25,'rgba(219,79,61,.18)');
-    px(12,95,74,9,shadow);px(23,82,51,23,dark);px(26,77,46,17,light);
-    px(39,64,22,25,dark);px(42,65,20,14,light);
-    px(46,75,4,3,eye);px(56,75,4,3,eye);
-    px(7,101,19,6,light);px(72,101,18,6,light);px(20,104,8,15,dark);px(69,104,7,15,dark);
-    return c;
-  }
-  if(kind==='husk') {
-    glow(48,66,50,'rgba(197,71,27,.16)');
-    px(18,48,60,45,dark);px(24,46,48,46,light);px(29,16,38,31,light);px(24,22,48,6,shadow);
-    px(20,80,19,44,dark);px(57,80,19,44,dark);px(8,52,14,49,light);px(74,52,14,49,light);
-    px(33,29,8,5,eye);px(55,29,8,5,eye);px(39,39,18,5,shadow);
-    for(let y=55;y<88;y+=9)px(29,y,39,3,'#281a1a');
-    return c;
-  }
-  if(kind==='siren') {
-    glow(48,64,44,'rgba(198,121,218,.22)');
-    px(35,27,27,27,light);px(31,20,35,17,shadow);px(30,54,36,56,light);
-    px(28,103,13,23,dark);px(55,103,13,23,dark);
-    px(21,59,9,42,light);px(65,59,9,42,light);
-    px(38,39,7,3,eye);px(54,39,7,3,eye);px(38,46,23,3,shadow);
-    for(let y=62;y<104;y+=6) px(31,y,33,2,'rgba(255,255,255,.2)');
-    return c;
-  }
-  if(kind==='archivist') {
-    glow(48,57,51,'rgba(231,79,75,.3)');px(21,21,54,35,dark);px(27,23,42,31,light);
-    for(let x=17;x<86;x+=10) px(x,46,6,70,dark);
-    px(18,57,60,49,light);px(36,79,24,26,shadow);px(42,37,12,6,'#f65c55');
-    px(36,46,24,6,shadow);px(29,14,38,6,'#e1ad9e');
-    return c;
-  }
-  // Watcher + Matron share humanoid geometry but have different heads.
-  glow(48,64,43,kind==='watcher'?'rgba(206,44,42,.18)':'rgba(157,179,169,.2)');
-  px(34,18,29,27,light);px(32,46,34,43,light);
-  px(26,53,11,54,light);px(63,53,11,54,light);px(35,86,13,39,dark);px(53,86,13,39,dark);
-  if(kind==='watcher'){
-    px(40,27,6,5,eye);px(52,27,6,5,eye);px(43,38,12,4,shadow);
-    px(27,46,43,7,'#321b1e');
-  } else {
-    px(30,20,39,10,'#eee8d3');px(41,25,15,4,'#973d3f');px(46,20,5,14,'#973d3f');
-    px(39,35,8,3,eye);px(53,35,8,3,eye);px(34,70,30,7,'#a8a7a4');
-  }
-  return c;
+  drawCreature(g,kind,color);return c;
 }
 
 export class HorrorRenderer {
@@ -220,11 +293,36 @@ export class HorrorRenderer {
       }
       g.globalAlpha=1;
     }
+    // Volumetric flashlight approximation: cone bloom and smoke in screen space.
+    if(p.flashlight && p.battery>0){
+      const spread=Math.min(W*.52,H*1.12), cx=W*.5,cy=horizon+H*.08;
+      const cone=g.createRadialGradient(cx,cy,4,cx,cy,spread);
+      cone.addColorStop(0,`rgba(212,226,203,${.028*p.battery/100})`);
+      cone.addColorStop(.45,'rgba(170,202,180,.012)');cone.addColorStop(1,'rgba(0,0,0,0)');
+      g.fillStyle=cone;g.fillRect(0,0,W,H);
+    }
+    // Suspended particulates float through the player's beam and emphasize scale.
+    const t=this.frame*.009;
+    for(let i=0;i<53;i++){
+      const x=((i*111.13+Math.sin(t*.65+i*3.17)*27)%W+W)%W;
+      const y=((i*37.7+t*15*(i%4+1))%H+H)%H;
+      const local=Math.max(0,1-Math.abs(x-W/2)/(W*.4));
+      g.fillStyle=`rgba(218,221,197,${(.035+local*.10)*(p.flashlight?1:.3)})`;
+      g.fillRect(x|0,y|0,i%9===0?2:1,i%13===0?2:1);
+    }
     this.weapon(g,p,run);
     if(p.hurt>0){g.fillStyle=`rgba(152,13,15,${p.hurt*.22})`;g.fillRect(0,0,W,H);}
     if(run.chapter.number===4) {
       const noise=g.createLinearGradient(0,0,W,0);noise.addColorStop(0,'rgba(57,26,75,.08)');noise.addColorStop(1,'rgba(77,89,134,.03)');
       g.fillStyle=noise;g.fillRect(0,0,W,H);
+    }
+    // Unpredictable radio-video tearing at the transmission array and near death.
+    const distortion=(chapter.number===4?.23:0)+(1-p.health/100)*.18;
+    if(distortion>0 && this.frame%23<2){
+      for(let i=0;i<6;i++){
+        const y=((this.frame*19+i*47)%H)|0,h=1+(i%3),dx=((i%2)?1:-1)*(2+distortion*14);
+        g.drawImage(this.canvas,0,y,W,h,dx,y,W,h);
+      }
     }
     if(settings.scanlines){g.fillStyle='rgba(0,0,0,.12)';for(let y=1;y<H;y+=3)g.fillRect(0,y,W,1);}
     // Original real-time film grain: deliberately sparse for performance.

@@ -20,3 +20,13 @@
 - [ ] Run automated browser tests and confirm zero P0/P1 issues.
 
 **Release verdict: NOT YET SHIP-CERTIFIED.** The playable pre-release supports the complete five-chapter gameplay loop, but manual production QA and polish are outstanding. Do not mislabel it as an AAA, 1.0 or fully validated commercial release.
+
+## Presentation overhaul 0.9.1 review gate
+- [x] Browser-app Canvas test updated for organic creature geometry
+- [x] 31 automated tests pass (source-level and simulation coverage)
+- [x] Five 24-second original atmospheres generated and embedded
+- [ ] Human visual playtest of each enemy from distant / mid / close range
+- [ ] Weapon and creature animations authored, tuned and playtested
+- [ ] Headphone and speaker mastering; photosensitivity / audio sensitivity review
+- [ ] External art direction signoff, final bespoke materials and high fidelity assets
+- [ ] Commercial compliance review, age ratings, store listing and broad hardware QA

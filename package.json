@@ -1,6 +1,6 @@
 {
   "name": "the-maze-signal-lost",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "type": "module",
   "description": "Offline-first five-chapter PS1-inspired survival horror FPS",

@@ -1,3 +1,11 @@
+## 0.9.1 — Horror presentation overhaul
+- Replaced blocky humanoid enemy sprites with procedural anatomical silhouettes, corrupted faces and chapter-specific mutations.
+- Added weathered wall surface damage, volumetric flashlight bloom, floating particles and broadcast signal tearing.
+- Enhanced reactive ambient audio with heartbeat, breath, whisper, impact and tension stingers.
+- Expanded five original soundtrack loop masters from 12 seconds to 24 seconds.
+- Extended headless smoke test Canvas support and retained 31 passing tests.
+- Full browser visual QA and custom rigged 3D assets remain outstanding; see release checklist.
+
 # Changelog
 
 ## 0.9.0 — 2026-11-18 (playable pre-release)

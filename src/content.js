@@ -1,5 +1,5 @@
 /** THE MAZE: SIGNAL LOST — all narrative and balance data, no DOM dependencies. */
-export const VERSION = '0.9.0';
+export const VERSION = '0.9.1';
 export const STORAGE_KEY = 'signal-lost-save-v1';
 export const DEFAULT_SETTINGS = Object.freeze({
   master: 0.75, music: 0.55, sfx: 0.85, sensitivity: 0.75,

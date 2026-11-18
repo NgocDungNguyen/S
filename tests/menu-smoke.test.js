@@ -12,7 +12,7 @@ function setupDOM() {
       if(key==='createLinearGradient'||key==='createRadialGradient')return ()=>fill;
       if(typeof key==='string'&&['fillRect','drawImage','stroke','beginPath','moveTo',
       'lineTo','closePath','save','restore','translate','rotate','clearRect',
-      'fill','arc','rect','strokeRect'].includes(key)) return ()=>{};
+      'fill','arc','ellipse','bezierCurveTo','quadraticCurveTo','rect','strokeRect'].includes(key)) return ()=>{};
       return target[key];
     },set(target,key,value){target[key]=value;return true;}
   });

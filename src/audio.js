@@ -3,7 +3,7 @@ const NOTES = [41.2,43.65,38.89,49,36.71];
 const TRACKS = ['01_the_maze','02_the_ward','03_the_foundry','04_the_transmission','05_the_heart'];
 export class HorrorAudio {
   constructor(){this.ctx=null;this.master=null;this.music=null;this.effects=null;
-    this.drones=[];this.lfo=[];this.chapter=-1;this.clock=0;this.stinger=0;
+    this.drones=[];this.lfo=[];this.chapter=-1;this.clock=0;this.stinger=0;this.heartClock=0;this.detailClock=0;this.breathClock=0;
     this.track=null;this.trackGain=null;this.loopBuffers=new Map();
     this.settings={master:.75,music:.55,sfx:.85};this.muted=false;}
   async start(){
@@ -62,7 +62,7 @@ export class HorrorAudio {
     for(const node of this.drones) {node.gain.gain.setTargetAtTime(0,t,.14);node.osc.stop(t+.8);}
     if(this.track) {try{this.track.stop(t+.25);}catch{}this.track=null;}
     if(this.trackGain) this.trackGain.gain.setTargetAtTime(0,t,.07);
-    this.drones=[];this.chapter=index;this.clock=0;this.stinger=2.5;
+    this.drones=[];this.chapter=index;this.clock=0;this.stinger=2.5;this.heartClock=1;this.detailClock=2;this.breathClock=4;
     this.loadRecordedLoop(index).catch(()=>{}); // fallback drones remain active if file loading fails
     const root=NOTES[index]||NOTES[0];
     [1,1.005,1.501,2.014].forEach((ratio,i)=>{
@@ -91,9 +91,60 @@ export class HorrorAudio {
     this.track=source;this.trackGain=gain;
     this.drones.forEach(n=>n.gain.gain.setTargetAtTime(.08,this.ctx.currentTime,.4));
   }
+  // Synthesized binaural-style mechanical knocks, skin-deep breathing,
+  // and low-frequency pulse layers. None rely on third-party sound libraries.
+  thud(hz=52, volume=.14, duration=.23, when=0){
+    const n=this.oscillator(hz,'sine',volume,duration,this.effects,when);
+    if(n)n.osc.frequency.exponentialRampToValueAtTime(Math.max(24,hz*.48),n.now+duration*.85);
+    this.noise(volume*.3,duration*.55,170,'lowpass',when);
+  }
+  whisper(){
+    if(!this.ctx)return;
+    const now=this.ctx.currentTime;
+    const src=this.ctx.createBufferSource(),band=this.ctx.createBiquadFilter(),wah=this.ctx.createBiquadFilter(),gain=this.ctx.createGain();
+    src.buffer=this.noiseBuffer;src.loop=true;
+    band.type='bandpass';band.Q.value=3.2;band.frequency.setValueAtTime(450,now);
+    band.frequency.exponentialRampToValueAtTime(1130,now+.6);
+    band.frequency.exponentialRampToValueAtTime(280,now+1.6);
+    wah.type='lowpass';wah.frequency.value=1800;
+    gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.065,now+.19);
+    gain.gain.setValueAtTime(.05,now+1.0);gain.gain.exponentialRampToValueAtTime(.0001,now+2.25);
+    src.connect(band);band.connect(wah);wah.connect(gain);gain.connect(this.effects);
+    src.start(now);src.stop(now+2.28);
+  }
+  scare(){
+    this.noise(.34,.65,3600,'bandpass');
+    const n=this.oscillator(180,'sawtooth',.27,.56);
+    if(n)n.osc.frequency.exponentialRampToValueAtTime(43,n.now+.52);
+    this.oscillator(54,'square',.16,.41,this.effects,.025);
+  }
   update(dt,danger=0){
     if(!this.ctx||this.chapter<0) return;
     this.clock+=dt;this.stinger-=dt;
+    this.heartClock-=dt;this.detailClock-=dt;this.breathClock-=dt;
+    if(this.heartClock<=0){
+      // A double beat accelerates when a creature is close; danger drives tempo.
+      const speed=1.65-danger*.9;
+      this.thud(45+danger*16,.06+danger*.16,.21);
+      this.thud(41+danger*13,.045+danger*.13,.19,.16);
+      this.heartClock=Math.max(.47,speed);
+    }
+    if(this.breathClock<=0){
+      if(danger>.32){this.noise(.11+danger*.1,.8,290,'lowpass');}
+      else if(Math.random()<.38){this.whisper();}
+      this.breathClock=4+Math.random()*6-danger*2;
+    }
+    if(this.detailClock<=0){
+      const which=Math.random();
+      if(which<.34){
+        // Far-away architectural knocks which do not masquerade as UI events.
+        this.thud(35+Math.random()*65,.04,.45);
+        this.thud(31+Math.random()*50,.025,.42,.38);
+      } else if(which<.72){
+        this.noise(.055,.7,1400+Math.random()*1900,'bandpass');
+      } else if(danger>.57){this.scare();}
+      this.detailClock=3+Math.random()*7-danger*2;
+    }
     for(let i=0;i<this.drones.length;i++) {
       const n=this.drones[i];
       n.filter.frequency.setTargetAtTime(62+this.chapter*18+danger*260+Math.sin(this.clock*.23+i)*17,this.ctx.currentTime,.14);
@@ -130,12 +181,12 @@ export class HorrorAudio {
       case 'reload':this.noise(.14,.17,1700);this.oscillator(400,'triangle',.08,.1);break;
       case 'pickup':this.oscillator(440,'sine',.1,.19);this.oscillator(660,'sine',.07,.21,this.effects,.11);break;
       case 'objective':this.oscillator(220,'sawtooth',.15,.65);this.oscillator(330,'triangle',.1,.66,this.effects,.17);break;
-      case 'door':this.noise(.36,.9,140);this.oscillator(53,'sawtooth',.24,.9);break;
-      case 'hurt':this.noise(.41,.4,280);this.oscillator(53,'triangle',.3,.47);break;
+      case 'door':this.noise(.36,.9,140);this.oscillator(53,'sawtooth',.24,.9);this.thud(36,.2,.7,.12);break;
+      case 'hurt':this.noise(.41,.4,280);this.oscillator(53,'triangle',.3,.47);this.scare();break;
       case 'death':this.oscillator(83,'sawtooth',.38,2);this.noise(.2,1.5,110);break;
-      case 'enemy':this.oscillator(43,'sawtooth',.15,.56);this.noise(.1,.5,2200,'bandpass');break;
+      case 'enemy':this.oscillator(43,'sawtooth',.15,.56);this.noise(.1,.5,2200,'bandpass');this.thud(38,.15,.4);break;
       case 'note':this.oscillator(349,'sine',.07,.5);this.oscillator(523,'sine',.04,.45,this.effects,.14);break;
-      case 'static':this.noise(.18,.38,3600,'highpass');break;
+      case 'static':this.noise(.18,.38,3600,'highpass');this.whisper();break;
       case 'ui':this.oscillator(380,'triangle',.06,.075);break;
       case 'end':this.oscillator(174.61,'sine',.25,2,this.music);this.oscillator(261.63,'sine',.2,2.5,this.music,.22);break;
     }
